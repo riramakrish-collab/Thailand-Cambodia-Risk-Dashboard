@@ -1,0 +1,16 @@
+# API keys
+.env
+*.env
+
+# Data files
+*.xlsx
+*.csv
+
+# Dashboard output
+risk_dashboard_outputs/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
