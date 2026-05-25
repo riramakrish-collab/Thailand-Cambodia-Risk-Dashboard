@@ -10,13 +10,17 @@ The output is a fully self-contained interactive HTML dashboard requiring no ser
  
 ---
 ## Screenshots
-![Description](assets/14 Month Composite Risk Scores.png)
-![Description](assets/Conflict Timeline Graphs.png)
-![Description](assets/December 2025 Heatmap.png)
-![Description](assets/Displacement Zoom in December 2025 (Cambodia).png)
-![Description](assets/Displacement Zoom in December 2025 (Thailand).png)
-![Description](assets/Precursor Signals Graphs.png)
+![14 Month Composite Risk Scores](assets/14%20Month%20Composite%20Risk%20Scores.png)
 
+![Conflict Timeline Graphs](assets/Conflict%20Timeline%20Graphs.png)
+
+![December 2025 Heatmap](assets/December%202025%20Heatmap.png)
+
+![Displacement Zoom Cambodia](assets/Displacement%20Zoom%20in%20December%202025%20(Cambodia).png)
+
+![Displacement Zoom Thailand](assets/Displacement%20Zoom%20in%20December%202025%20(Thailand).png)
+
+![Precursor Signals Graphs](assets/Precursor%20Signals%20Graphs.png)
 ---
 ## Dashboard
  
