@@ -9,7 +9,9 @@ This tool ingests monthly ACLED conflict event data across three categories, dem
 The output is a fully self-contained interactive HTML dashboard requiring no server or build step.
  
 ---
- 
+## Screenshots
+! 
+---
 ## Dashboard
  
 | Tab | What It Shows |
