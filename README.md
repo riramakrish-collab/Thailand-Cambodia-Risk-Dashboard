@@ -9,7 +9,7 @@ This tool ingests monthly ACLED conflict event data across three categories, dem
 The output is a fully self-contained interactive HTML dashboard requiring no server or build step.
  
 ---
-## Screenshots
+## Dashboard Preview
 ![14 Month Composite Risk Scores](assets/14%20Month%20Composite%20Risk%20Scores.png)
 
 ![Conflict Timeline Graphs](assets/Conflict%20Timeline%20Graphs.png)
