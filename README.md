@@ -1,52 +1,111 @@
-# Thailand-Cambodia-Risk-Dashboard
-An 8-signal geopolitical risk model and interactive dashboard tracking political instability in Thailand and Cambodia using ACLED conflict data and IDMC displacement data.
-Built for the Moonshot-Labs Analyst Jam for the Intelligence Community (MAJIC) (an NGA-affiliated hackathon focused on AI-driven geopolitical risk prediction)
-
-What It Does
-This tool ingests monthly ACLED event data across three categories (demonstrations, civilian targeting, political violence) and computes a composite escalation risk score using eight precursor signals. The output is an interactive HTML dashboard with charts, heatmaps, a Leaflet geographic map, and an optional AI analyst briefing powered by the Gemini API.
-
-The 8-Signal Model
-SignalWeightDescriptionCivilian Targeting Shift15%Civilian targeting / demonstrations ratio (r=0.71 lag-1 predictor)Violence Intensity15%Fatalities per event, 3-month smoothedFatality Acceleration15%Change in 3-month rolling fatality totalsEvent Acceleration15%1st derivative of 3-month event momentumAnomaly (IQR)12%Robust outlier detection vs 12-month rolling windowVolatility Regime10%6-month vs 24-month standard deviation ratioViolence-Protest Divergence10%Suppression indicator (violence z-score minus protest z-score)Jerk8%2nd derivative of event momentum
-All signals are min-max normalized to [0, 1] and combined via weighted sigmoid scoring.
-
-Data Sources
-
-ACLED — Armed Conflict Location & Event Data (monthly xlsx exports)
-IDMC — Internal Displacement Monitoring Centre (event-level CSV)
-
-
-Setup
-bash# Clone the repo
+# Thailand-Cambodia Escalation Risk Dashboard
+ 
+An 8-signal geopolitical risk model and interactive dashboard tracking political instability in Thailand and Cambodia, built for the Moonshot-Labs Analyst Jam for the Intelligence Community (MAJIC), an NGA-affiliated hackathon focused on AI-driven geopolitical risk prediction.
+ 
+## Overview
+ 
+This tool ingests monthly ACLED conflict event data across three categories, demonstrations, civilian targeting, and political violence, and computes a composite escalation risk score using eight precursor signals derived from cross-correlation analysis against historical escalation episodes.
+ 
+The output is a fully self-contained interactive HTML dashboard requiring no server or build step.
+ 
+---
+ 
+## Dashboard
+ 
+| Tab | What It Shows |
+|---|---|
+| Overview | Monthly events, risk scores, fatalities, 3-month momentum, AI analyst briefing |
+| Geographic Map | Leaflet map with displacement event markers, animated month-by-month |
+| Risk Heatmap | 14-month risk score grid per country with hover tooltips |
+| Event Breakdown | Stacked bar charts by conflict category |
+| Raw Data | Filterable table of all monthly metrics |
+| Precursor Signals | All 8 individual signal charts + composite score |
+| Methodology | Full explanation of the model, signal weights, and limitations |
+ 
+---
+ 
+## The 8-Signal Model
+ 
+All signals are min-max normalized to [0, 1] and combined via weighted sigmoid scoring:
+ 
+```
+risk_score = sigmoid(5 × (weighted_sum − 0.35))
+```
+ 
+| Signal | Weight | Method | Key Finding |
+|---|---|---|---|
+| Civilian Targeting Shift | 15% | Civilian targeting / (demonstrations + 1), 3mo smoothed | r=0.71 lag-1 correlation with future violence |
+| Violence Intensity | 15% | Fatalities per event, 3mo smoothed | Rising lethality independent of event count signals intensification |
+| Fatality Acceleration | 15% | Δ in 3mo rolling fatality totals | Captures whether deaths are trending up or down |
+| Event Acceleration | 15% | 1st derivative of 3mo event momentum | Positive = worsening; negative = calming |
+| Anomaly Detection | 12% | IQR-based outlier vs 12mo rolling window | Robust to heavy-tailed conflict distributions |
+| Volatility Regime | 10% | 6mo vs 24mo standard deviation ratio | Ratio > 1.0 = unstable period; spikes precede escalation |
+| Violence-Protest Divergence | 10% | Violence z-score minus protest z-score | Positive = violence outpacing protests (suppression signal) |
+| Jerk | 8% | 2nd derivative of event momentum | Earliest detectable signal of a new escalation pattern |
+ 
+**Precursor alert** fires when three leading indicators converge simultaneously: civilian targeting above 6-month mean, volatility ratio > 1.2, and positive event acceleration.
+ 
+---
+ 
+## Data Sources
+ 
+- **[ACLED](https://acleddata.com/)** — Armed Conflict Location & Event Data (monthly xlsx exports, 3 categories × 2 countries)
+- **[IDMC](https://www.internal-displacement.org/)** — Internal Displacement Monitoring Centre (event-level CSV with lat/lng)
+- **[Google Gemini API](https://ai.google.dev/)** — Optional AI analyst narrative (requires API key)
+---
+ 
+## Setup
+ 
+```bash
+# Clone
 git clone https://github.com/yourusername/risk-dashboard.git
 cd risk-dashboard
-
+ 
 # Install dependencies
 pip install -r requirements.txt
-
-# Add your data files to the project directory
-# (ACLED xlsx files + IDMC CSVs — see DATASETS config in risk_dashboard.py)
-
+ 
+# Place your data files in the project root
+# (ACLED xlsx exports + IDMC CSVs — filenames configured in DATASETS at top of script)
+ 
 # Optional: enable AI analyst summary
 export GEMINI_API_KEY=your_key_here
-
+ 
 # Run
 python3 risk_dashboard.py
-Open risk_dashboard_outputs/risk_dashboard.html in your browser.
-
-Dashboard Tabs
-
-Overview — Monthly events, risk scores, fatalities, 3-month momentum
-Geographic Map — Leaflet map with displacement event markers, animated by month
-Risk Heatmap — 14-month risk score grid with hover tooltips
-Event Breakdown — Stacked bar charts by conflict category
-Raw Data — Filterable table of all monthly metrics
-Precursor Signals — All 8 individual signal charts + composite score
-Methodology — Full explanation of the model and its limitations
-
-
-Security Note
-Never hardcode API keys. This project uses environment variables exclusively:
-bashexport GEMINI_API_KEY=your_key_here
-
-Limitations
-This is a quantitative momentum model, not a full geopolitical assessment. It does not account for diplomatic context, election cycles, or media coverage patterns. Spikes in ACLED reporting backlogs can create false signals. Best used as a screening tool, not as a prediction engine.
+```
+ 
+Open `risk_dashboard_outputs/risk_dashboard.html` in your browser. No server required.
+ 
+---
+ 
+## Project Structure
+ 
+```
+risk-dashboard/
+├── risk_dashboard.py          # Main script — data loading, modeling, dashboard generation
+├── requirements.txt           # Python dependencies
+├── README.md
+├── .gitignore                 # Excludes API keys, data files, and outputs
+└── risk_dashboard_outputs/    # Generated dashboard (git-ignored)
+    └── risk_dashboard.html
+```
+ 
+---
+ 
+## Security
+ 
+API keys are loaded exclusively from environment variables, never hardcoded.
+ 
+```bash
+export GEMINI_API_KEY=your_key_here
+```
+ 
+If the key is not set, the dashboard runs normally with an AI summary placeholder.
+ 
+---
+ 
+## Limitations
+ 
+This is a quantitative momentum model, not a full geopolitical intelligence assessment. It does not account for diplomatic context, election cycles, or media coverage patterns. Spikes in ACLED reporting backlogs can produce false signals. The model is best used as a screening tool, not as a standalone prediction engine.
+ 
+---
